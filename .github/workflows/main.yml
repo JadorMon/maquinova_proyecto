@@ -1,0 +1,32 @@
+name: CI/CD Docker
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v3
+
+    - name: Configurar Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ JadorMon }}
+        password: ${{ dckr_pat_s8L1IM23F-sIVgwy8QGE1zs5efU }}
+
+    - name: Construir imagen Docker
+      run: docker build -t tuusuario/maquinova-app:latest .
+
+    - name: Subir a Docker Hub
+      run: docker push tuusuario/maquinova-app:latest
+
+    - name: Instalar dependencias y ejecutar pruebas
+      run: |
+        npm install
+        npm test -- --coverage
