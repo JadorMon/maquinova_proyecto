@@ -17,8 +17,8 @@ jobs:
     - name: Configurar Docker Hub
       uses: docker/login-action@v2
       with:
-        username: ${{ Maquinova }}
-        password: ${{ dckr_pat_qArVKLRN5NIwbqfXZ06Rn9al0ME }}
+        username: ${{ DOCKER_USER }}
+        password: ${{ Maquinova }}
 
     - name: Construir imagen Docker
       run: docker build -t Maquinova/maquinova-app:latest .
