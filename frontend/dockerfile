@@ -1,22 +1,22 @@
 # Imagen base de Node
 FROM node:20
 
-# Crear carpeta dentro del contenedor
 WORKDIR /app
 
-# Copiar package.json y package-lock.json del frontend
-COPY ./frontend/package*.json ./
+# Copiar package.json del frontend
+COPY package*.json ./
 
 # Instalar dependencias
 RUN npm install
 
-# Copiar el resto del código del frontend
-COPY ./frontend/ ./
+# Copiar el resto del código (sin ./frontend porque ya estás dentro de ese contexto)
+COPY . .
 
-# Compilar la aplicación de React
+# Compilar React
 RUN npm run build
 
-# Servir la app con un servidor de producción
+# Servir la app con serve
 RUN npm install -g serve
 EXPOSE 3000
 CMD ["serve", "-s", "build"]
+
