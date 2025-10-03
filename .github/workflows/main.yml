@@ -23,6 +23,8 @@ jobs:
           cd backend
           npm install
           npm test -- --ci --coverage
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
 
 
       # Frontend tests
