@@ -1,22 +1,29 @@
-require("dotenv").config({ path: __dirname + "/../.env" });
-
 const request = require("supertest");
 const express = require("express");
 const mongoose = require("mongoose");
+const { MongoMemoryServer } = require("mongodb-memory-server");
 
 const authRoutes = require("../routes/auth");
-const connectDB = require("../db");
 
 const app = express();
 app.use(express.json());
 app.use("/auth", authRoutes);
 
+let mongoServer;
+
 beforeAll(async () => {
-  await connectDB(); // Conecta a MongoDB antes de ejecutar tests
-});
+  mongoServer = await MongoMemoryServer.create();
+  const uri = mongoServer.getUri();
+
+  await mongoose.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+}, 30000);
 
 afterAll(async () => {
-  await mongoose.connection.close(); // Cierra conexión después
+  await mongoose.disconnect();
+  await mongoServer.stop();
 });
 
 describe("Pruebas de login", () => {
@@ -26,5 +33,5 @@ describe("Pruebas de login", () => {
       .send({ username: "no_existe", password: "123456" });
 
     expect(res.statusCode).toBe(401);
-  }, 10000);
+  });
 });

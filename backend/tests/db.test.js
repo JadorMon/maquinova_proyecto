@@ -1,19 +1,25 @@
-require("dotenv").config({ path: __dirname + "/../.env" });
 const mongoose = require("mongoose");
-const connectDB = require("../db");
+const { MongoMemoryServer } = require("mongodb-memory-server");
 
-console.log("🔍 MONGO_URI =", process.env.MONGO_URI);
+let mongoServer;
 
 describe("Pruebas de conexión a la base de datos", () => {
   beforeAll(async () => {
-    await connectDB();
-  });
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
+
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+  }, 30000); // da más tiempo por si acaso
 
   afterAll(async () => {
-    await mongoose.connection.close();
+    await mongoose.disconnect();
+    await mongoServer.stop();
   });
 
-  test("Debe conectarse correctamente a MongoDB", () => {
+  test("Debe conectarse correctamente a MongoDB en memoria", () => {
     expect(mongoose.connection.readyState).toBe(1);
   });
 });
