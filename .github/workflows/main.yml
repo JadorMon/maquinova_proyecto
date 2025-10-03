@@ -50,8 +50,3 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_USER }}/maquinova-backend ./backend
           docker push ${{ secrets.DOCKER_USER }}/maquinova-backend
-
-      - name: Build and push frontend
-        run: |
-          docker build -t ${{ secrets.DOCKER_USER }}/maquinova-frontend ./frontend
-          docker push ${{ secrets.DOCKER_USER }}/maquinova-frontend
