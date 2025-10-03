@@ -6,9 +6,37 @@ on:
       - main
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # Backend tests
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Run backend tests
+        run: |
+          cd backend
+          npm test -- --ci --coverage
+
+      # Frontend tests
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Run frontend tests
+        run: |
+          cd frontend
+          npm test -- --ci --coverage
+
   build:
     runs-on: ubuntu-latest
-
+    needs: test   # 🔑 Solo corre si las pruebas pasan
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
