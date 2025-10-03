@@ -9,32 +9,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-steps:
-  - name: Checkout repo
-    uses: actions/checkout@v3
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-  - name: Set up Node.js
-    uses: actions/setup-node@v3
-    with:
-      node-version: 20
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-  - name: Install dependencies
-    run: |
-      cd backend
-      npm install
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASS }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
 
-  - name: Run backend unit tests
-    run: |
-      cd backend
-      npm test
+      - name: Build and push backend
+        run: |
+          docker build -t ${{ secrets.DOCKER_USER }}/maquinova-backend ./backend
+          docker push ${{ secrets.DOCKER_USER }}/maquinova-backend
 
-  - name: Install frontend dependencies
-    run: |
-      cd frontend
-      npm install
-
-  - name: Run frontend unit tests
-    run: |
-      cd frontend
-      npm test
-
+      - name: Build and push frontend
+        run: |
+          docker build -t ${{ secrets.DOCKER_USER }}/maquinova-frontend ./frontend
+          docker push ${{ secrets.DOCKER_USER }}/maquinova-frontend
